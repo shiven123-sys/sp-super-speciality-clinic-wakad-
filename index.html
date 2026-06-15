@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SP Super Speciality Clinic | Multi-Page with Gallery</title>
+  <style>
+    /* (same as before, no changes needed - keeping it clean) */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      background-color: #f4f8fb;
+      color: #102a43;
+      line-height: 1.4;
+      scroll-behavior: smooth;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: linear-gradient(135deg, rgba(10, 55, 94, 0.92), rgba(6, 44, 70, 0.88)), 
+                  url('https://images.pexels.com/photos/263402/pexels-photo-263402.jpeg?auto=compress&cs=tinysrgb&w=1600');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid rgba(45, 212, 191, 0.5);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding: 0.9rem 2rem;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: white;
+      padding: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .logo-text h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0c2340, #1a4870);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .logo-text span {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #009688;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-menu a {
+      text-decoration: none;
+      font-weight: 600;
+      color: #1e3a5f;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .nav-menu a:hover { color: #009688; }
+    .btn-appointment-nav {
+      background: #1a4870;
+      color: white !important;
+      padding: 0.5rem 1.3rem;
+      border-radius: 40px;
+      font-weight: 700;
+    }
+    .btn-appointment-nav:hover {
+      background: #0c3452;
+      transform: translateY(-1px);
+    }
+
+    .page {
+      display: none;
+      animation: fade 0.3s ease;
+    }
+    .page.active-page {
+      display: block;
+    }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(8px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 3rem;
+      align-items: center;
+      padding: 4rem 2rem 5rem;
+      position: relative;
+    }
+    .hero-left h1 {
+      font-size: 3.8rem;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .hero-sub {
+      font-size: 1.3rem;
+      color: #d9f0ff;
+      border-left: 4px solid #2dd4bf;
+      padding-left: 1rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .kicker {
+      background: rgba(220, 53, 69, 0.85);
+      color: white;
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .btn-primary {
+      background: #2dd4bf;
+      color: #0c2340;
+      padding: 0.9rem 2rem;
+      border-radius: 48px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-teal {
+      background: #009688;
+      color: white;
+      padding: 0.9rem 2rem;
+      border-radius: 48px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px);
+      border: 1.5px solid #2dd4bf;
+      color: white;
+      padding: 0.85rem 2rem;
+      border-radius: 48px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .glass-card {
+      background: rgba(10, 35, 55, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 32px;
+      padding: 1.8rem;
+      border: 1px solid rgba(45,212,191,0.5);
+      color: white;
+    }
+
+    section {
+      background: rgba(255,255,255,0.94);
+      margin: 2rem 0;
+      border-radius: 48px;
+      padding: 3rem 0;
+    }
+    .section-title {
+      font-size: 2.2rem;
+      text-align: center;
+      color: #0c2340;
+      margin-bottom: 1.5rem;
+    }
+
+    .doctors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 2.5rem;
+      margin-top: 1rem;
+      padding: 0 1rem;
+    }
+    .doctor-card {
+      background: white;
+      border-radius: 40px;
+      padding: 2rem 1.8rem;
+      text-align: center;
+      transition: 0.25s;
+      box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+    }
+    .doctor-card:hover {
+      transform: translateY(-8px);
+    }
+    .doctor-img {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 1.2rem;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #f0f6fe, #e9f0f8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 15px 25px -8px rgba(0,0,0,0.1);
+      border: 4px solid white;
+    }
+    .doctor-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .doctor-img-placeholder {
+      font-size: 5rem;
+      color: #1a4870;
+    }
+    .doctor-card h3 {
+      font-size: 1.7rem;
+      margin: 1rem 0 0.3rem;
+      color: #1a4870;
+    }
+    .contact-details {
+      background: #f8fafc;
+      padding: 0.8rem;
+      border-radius: 28px;
+      margin: 1rem 0;
+    }
+
+    .about-grid, .services-grid, .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+    .service-card, .testimonial-card, .about-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.8rem;
+      transition: 0.25s;
+    }
+    .testimonial-card .reviewer {
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #009688;
+      font-size: 0.9rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .gallery-item {
+      background: white;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+      transition: 0.25s;
+    }
+    .gallery-item:hover {
+      transform: translateY(-6px);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .contact-info-text {
+      font-size: 1.2rem;
+      line-height: 1.6;
+    }
+    .contact-info-text p {
+      margin-bottom: 1rem;
+    }
+    .contact-info-text strong {
+      font-size: 1.3rem;
+      color: #0c2340;
+    }
+    .contact-info-text a {
+      color: #1a4870;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .map-container {
+      border-radius: 32px;
+      overflow: hidden;
+      height: 500px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+    }
+    .map-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .faq-item {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .floating-actions {
+      position: fixed;
+      bottom: 2rem;
+      right: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 99;
+    }
+    .float-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      transition: 0.2s;
+      text-decoration: none;
+      font-size: 1.8rem;
+    }
+    .float-btn.whatsapp1 { background: #25D366; color: white; }
+    .float-btn.whatsapp2 { background: #128C7E; color: white; }
+    .float-btn.ai-assistant { background: #1a4870; color: white; cursor: pointer; }
+    .float-btn:hover { transform: scale(1.08); }
+
+    .ai-modal {
+      position: fixed;
+      bottom: 130px;
+      right: 90px;
+      width: 380px;
+      background: white;
+      border-radius: 32px;
+      box-shadow: 0 25px 45px rgba(0,0,0,0.25);
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+      border: 1px solid #2dd4bf;
+      overflow: hidden;
+    }
+    .ai-modal.active { display: flex; }
+    .ai-header {
+      background: #0c2340;
+      color: white;
+      padding: 1rem 1.2rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ai-body {
+      padding: 1rem;
+      height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      background: #f9fbfd;
+    }
+    .chat-message {
+      max-width: 85%;
+      padding: 0.6rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+    .user-message {
+      align-self: flex-end;
+      background: #1a4870;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .bot-message {
+      align-self: flex-start;
+      background: #eef2fa;
+      color: #1e3a5f;
+      border-bottom-left-radius: 4px;
+    }
+    .ai-input-area {
+      display: flex;
+      padding: 0.8rem;
+      border-top: 1px solid #e2edf7;
+      background: white;
+    }
+    .ai-input-area input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 40px;
+      outline: none;
+    }
+    .ai-input-area button {
+      background: #1a4870;
+      border: none;
+      color: white;
+      margin-left: 0.5rem;
+      padding: 0 1.2rem;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .ai-close { cursor: pointer; font-size: 1.4rem; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.25s;
+    }
+    footer {
+      background: #0c2340;
+      color: #adc6e0;
+      text-align: center;
+      padding: 2rem;
+      border-radius: 28px 28px 0 0;
+      margin-top: 2rem;
+    }
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .doctors-grid { grid-template-columns: 1fr; }
+      .doctor-img { width: 180px; height: 180px; }
+      .floating-actions { right: 1rem; bottom: 1rem; }
+      .ai-modal { right: 20px; bottom: 100px; width: 300px; }
+      .nav-menu { gap: 1rem; justify-content: center; margin-top: 0.5rem; }
+      .map-container { height: 350px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item img { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div class="nav-container">
+    <div class="logo-area">
+      <img class="logo-img" src="clinic_logo.jpeg" alt="Clinic Logo" onerror="this.style.display='none'">
+      <div class="logo-text"><h2>SP Super Speciality</h2><span>Surgeon-Led Excellence</span></div>
+    </div>
+    <ul class="nav-menu">
+      <li><a data-page="home">Home</a></li>
+      <li><a data-page="doctors">Doctors</a></li>
+      <li><a data-page="gallery">Gallery</a></li>
+      <li><a data-page="faq">FAQ</a></li>
+      <li><a data-page="contact">Contact</a></li>
+      <li><a href="#" class="btn-appointment-nav" id="navAppointmentBtn">📅 Appointment</a></li>
+    </ul>
+  </div>
+</div>
+
+<main id="app-root">
+  <div id="home-page" class="page active-page">
+    <div class="container hero-grid" style="padding-bottom: 2rem;">
+      <div class="hero-left">
+        <div class="kicker">✦ Consultant Pediatric & Neonatal Surgeon & Neurosurgeon</div>
+        <h1>SP Super Speciality Clinic</h1>
+        <div class="hero-sub">Wakad, Pune — Where Precision meets Compassion</div>
+        <div class="btn-group">
+          <button class="btn-primary hero-appointment-btn">📅 Book Appointment</button>
+          <a href="#" class="btn-teal ai-assistant-trigger">🤖 AI Assistant</a>
+          <a href="tel:+912067313000" class="btn-ghost">📞 Emergency</a>
+        </div>
+      </div>
+      <div class="glass-card">
+        <h3>🏥 Clinical Focus</h3>
+        <div style="display:flex; gap:1.5rem; margin:1rem 0;"><span>🩺 Pediatric Surgery</span><span>🧠 Neurosurgery</span></div>
+        <h4>📋 Consultation Hours</h4>
+        <p>Mon–Sat: 10:00 AM – 2:00 PM<br>Mon–Sat: 6:30 PM – 8:30 PM</p>
+        <button class="btn-ghost directions-btn" style="width:100%; margin-top:1rem;">📍 Get Directions</button>
+      </div>
+    </div>
+
+    <section><div class="container"><h2 class="section-title">About the Clinic</h2><div class="about-grid"><div class="about-card"><h3>🏛️ Our Vision</h3><p>Advanced surgical care with a human touch. State-of-the-art facility in Wakad.</p></div><div class="about-card"><h3>📢 Doctor’s Message</h3><p>“World‑class care with empathy.” — Dr. Mohnish Dighe</p></div><div class="about-card"><h3>⚕️ Core Values</h3><p>Clear communication, timely appointments, child‑centered excellence.</p></div></div></div></section>
+
+    <section><div class="container"><h2 class="section-title">Advanced Surgical Services</h2><div class="services-grid"><div class="service-card">🧠 Neurosurgery</div><div class="service-card">🩺 Pediatric Surgery</div><div class="service-card">👶 Neonatal Surgery</div><div class="service-card">📋 General Consultation</div><div class="service-card">🧸 Child Healthcare Guidance</div><div class="service-card">🔁 Surgical Follow-up</div></div></div></section>
+
+    <section>
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+          <h2 class="section-title" style="margin-bottom:0;">Patient Stories</h2>
+          <button class="btn-primary" id="openReviewBtn" style="background:#009688; padding:0.6rem 1.5rem;">✍️ Write a Review</button>
+        </div>
+        <div class="testimonials-grid" id="testimonialsGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="doctors-page" class="page">
+    <section><div class="container"><h2 class="section-title">Meet Our Specialists</h2><div class="doctors-grid">
+      <div class="doctor-card">
+        <div class="doctor-img"><img src="ashlesha.jpeg" alt="Dr. Ashlesha" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'doctor-img-placeholder\'>👩‍⚕️</div>'"></div>
+        <h3>Dr. Ashlesha Shimpi‑Dighe</h3>
+        <p>MBBS, DNB, MCh (Pediatric Surgery)</p>
+        <div class="contact-details"><p>📞 9850823550</p><p>✉️ ashlesha12@gmail.com</p></div>
+        <button class="btn-appointment-nav doctor-book" data-doc="ashlesha">Book Appointment</button>
+      </div>
+      <div class="doctor-card">
+        <div class="doctor-img"><img src="Dr-Mohnish.webp" alt="Dr. Mohnish" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'doctor-img-placeholder\'>👨‍⚕️</div>'"></div>
+        <h3>Dr. Mohnish Dighe</h3>
+        <p>MBBS, DNB (Neurosurgery)</p>
+        <div class="contact-details"><p>📞 9762801248</p><p>✉️ dighemohnish@yahoo.com</p></div>
+        <button class="btn-appointment-nav doctor-book" data-doc="mohnish">Book Appointment</button>
+      </div>
+    </div></div></section>
+  </div>
+
+  <div id="gallery-page" class="page">
+    <section><div class="container">
+      <h2 class="section-title">Our Clinic Gallery</h2>
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="3rdclinic.jpeg" alt="Clinic image 1" onerror="this.src='https://placehold.co/600x400/1a4870/white?text=Image+1'"></div>
+        <div class="gallery-item"><img src="4thclinic.jpeg.jpeg" alt="Clinic image 2" onerror="this.src='https://placehold.co/600x400/1a4870/white?text=Image+2'"></div>
+        <div class="gallery-item"><img src="5thclinic.jpeg" alt="Clinic image 3" onerror="this.src='https://placehold.co/600x400/1a4870/white?text=Image+3'"></div>
+        <div class="gallery-item"><img src="6thclinic.jpeg" alt="Clinic image 4" onerror="this.src='https://placehold.co/600x400/1a4870/white?text=Image+4'"></div>
+        <div class="gallery-item"><img src="Dr-Mohnish.webp" alt="Clinic image 5" onerror="this.src='https://placehold.co/600x400/1a4870/white?text=Image+5'"></div>
+        <div class="gallery-item"><img src="2ndclinic.avif" alt="Clinic image 6" onerror="this.src='https://placehold.co/600x400/1a4870/white?text=Image+6'"></div>
+      
+      
+    </section>
+  </div>
+
+  <div id="faq-page" class="page">
+    <section><div class="container"><h2 class="section-title">Frequently Asked Questions</h2><div class="faq-item"><strong>❓ Do I need a referral?</strong><br>No, direct booking via form or WhatsApp.</div><div class="faq-item"><strong>❓ What insurance plans do you accept?</strong><br>All major health insurance plans & cashless facilities.</div><div class="faq-item"><strong>❓ Are emergency services available 24/7?</strong><br>Call +91 20 6731 3000 for 24x7 on-call support.</div></div></section>
+  </div>
+
+  <div id="contact-page" class="page">
+    <section><div class="container"><h2 class="section-title">Reach Us</h2><div class="contact-grid">
+      <div class="contact-info-text">
+        <p><strong>📍 SP Superspeciality Clinic</strong><br>Khinvasara Trade Centre, Wakad, Pune – 411057</p>
+        <p><strong>📞 Clinic:</strong> +91 20 6731 3000</p>
+        <p><strong>📱 Dr. Ashlesha:</strong> <a href="tel:9850823550">9850823550</a> | <a href="mailto:ashlesha12@gmail.com">ashlesha12@gmail.com</a></p>
+        <p><strong>📱 Dr. Mohnish:</strong> <a href="tel:9762801248">9762801248</a> | <a href="mailto:dighemohnish@yahoo.com">dighemohnish@yahoo.com</a></p>
+        <button class="btn-primary contact-appointment-btn" style="margin-top:1rem;">📅 Book Appointment</button>
+      </div>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3781.4567829732977!2d73.768303!3d18.598712!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b9a9a9a9a9a9%3A0x5c5c5c5c5c5c5c5c!2sKhinvasara%20Trade%20Centre%2C%20Wakad%2C%20Pune!5e0!3m2!1sen!2sin!4v16171819202122!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div></div></section>
+  </div>
+</main>
+
+<div class="floating-actions">
+  <a href="https://wa.me/919850823550?text=Hello%20Dr.%20Ashlesha%2C%20I%20need%20an%20appointment" class="float-btn whatsapp1" target="_blank">👩‍⚕️</a>
+  <a href="https://wa.me/919762801248?text=Hello%20Dr.%20Mohnish%2C%20I%20need%20a%20consultation" class="float-btn whatsapp2" target="_blank">👨‍⚕️</a>
+  <div class="float-btn ai-assistant" id="aiAssistantBtn">🤖</div>
+</div>
+
+<div id="aiModal" class="ai-modal">
+  <div class="ai-header"><span>🤖 SP Clinic AI Assistant</span><span class="ai-close" id="closeAiModal">&times;</span></div>
+  <div class="ai-body" id="chatBody"><div class="chat-message bot-message">Hello! I'm your virtual clinic assistant. Ask me anything about appointments, doctors, hours, or location.</div></div>
+  <div class="ai-input-area"><input type="text" id="chatInput" placeholder="Type your question..."><button id="sendChatBtn">Send</button></div>
+</div>
+
+<!-- Appointment Modal -->
+<div id="appointmentModal" class="modal-overlay">
+  <div style="background:white; max-width:550px; width:90%; border-radius:40px; padding:2rem; position:relative;">
+    <div style="position:absolute; top:1rem; right:1.5rem; font-size:1.8rem; cursor:pointer;" id="closeModalBtn">&times;</div>
+    <h3 style="margin-bottom:0.5rem;">📋 Schedule a Visit</h3>
+    <p style="margin-bottom:1.5rem; color:#5a7a9a;">Request sent directly to the doctor.</p>
+    <form id="appointmentForm">
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+        <div style="flex:1"><label>Full Name *</label><input type="text" id="fullName" required style="width:100%; padding:0.8rem; border-radius:28px; border:1px solid #ccc;"></div>
+        <div style="flex:1"><label>Age</label><input type="number" id="age" style="width:100%; padding:0.8rem; border-radius:28px;"></div>
+      </div>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+        <div style="flex:1"><label>Phone *</label><input type="tel" id="phone" required style="width:100%; padding:0.8rem; border-radius:28px;"></div>
+        <div style="flex:1"><label>Email</label><input type="email" id="email" style="width:100%; padding:0.8rem; border-radius:28px;"></div>
+      </div>
+      <div style="margin-bottom:1rem;"><label>Preferred Doctor *</label><select id="preferredDoctor" required style="width:100%; padding:0.8rem; border-radius:28px;"><option value="">Select</option><option value="ashlesha">Dr. Ashlesha (9850823550)</option><option value="mohnish">Dr. Mohnish (9762801248)</option></select></div>
+      <div style="margin-bottom:1rem;"><label>Preferred Date *</label><input type="date" id="date" required style="width:100%; padding:0.8rem; border-radius:28px;"></div>
+      <div style="margin-bottom:1rem;"><label>Time Slot</label><div style="display:flex; gap:1rem;"><label><input type="radio" name="timeslot" value="Morning"> Morning</label><label><input type="radio" name="timeslot" value="Evening"> Evening</label><label><input type="radio" name="timeslot" value="Flexible"> Flexible</label></div></div>
+      <button type="submit" class="btn-primary" style="width:100%; background:#1a4870; color:white;">✅ Confirm & Notify Doctor</button>
+    </form>
+  </div>
+</div>
+
+<div id="reviewModal" class="modal-overlay">
+  <div style="background:white; max-width:500px; width:90%; border-radius:40px; padding:2rem; position:relative;">
+    <div style="position:absolute; top:1rem; right:1.5rem; font-size:1.8rem; cursor:pointer;" id="closeReviewModalBtn">&times;</div>
+    <h3 style="margin-bottom:0.5rem;">✍️ Share Your Experience</h3>
+    <p style="margin-bottom:1.5rem; color:#5a7a9a;">Your review will appear on our homepage.</p>
+    <form id="reviewForm">
+      <div style="margin-bottom:1rem;"><label>Your Name *</label><input type="text" id="reviewerName" required style="width:100%; padding:0.8rem; border-radius:28px; border:1px solid #ccc;"></div>
+      <div style="margin-bottom:1rem;"><label>City *</label><input type="text" id="reviewerCity" required style="width:100%; padding:0.8rem; border-radius:28px; border:1px solid #ccc;"></div>
+      <div style="margin-bottom:1rem;"><label>Your Review *</label><textarea id="reviewText" rows="3" required style="width:100%; padding:0.8rem; border-radius:28px; border:1px solid #ccc;"></textarea></div>
+      <button type="submit" class="btn-primary" style="width:100%; background:#1a4870; color:white;">⭐ Submit Review</button>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 SP Super Speciality Clinic — Surgeon-Led Excellence | Emergency: +91 20 6731 3000</p>
+</footer>
+
+<script>
+  // MULTI-PAGE ROUTING (unchanged)
+  const pages = {
+    home: document.getElementById('home-page'),
+    doctors: document.getElementById('doctors-page'),
+    gallery: document.getElementById('gallery-page'),
+    faq: document.getElementById('faq-page'),
+    contact: document.getElementById('contact-page')
+  };
+  function showPage(pageId) {
+    Object.values(pages).forEach(page => page.classList.remove('active-page'));
+    if (pages[pageId]) pages[pageId].classList.add('active-page');
+    else pages.home.classList.add('active-page');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll('[data-page]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const page = link.getAttribute('data-page');
+      showPage(page);
+      window.location.hash = page;
+    });
+  });
+  function handleHash() {
+    const hash = window.location.hash.substring(1);
+    if (pages[hash]) showPage(hash);
+    else showPage('home');
+  }
+  window.addEventListener('hashchange', handleHash);
+  handleHash();
+
+  // APPOINTMENT MODAL - NOW SENDS WHATSAPP MESSAGE TO SELECTED DOCTOR
+  const modal = document.getElementById('appointmentModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  function openModal() { modal.style.visibility = 'visible'; modal.style.opacity = '1'; }
+  function closeModal() { modal.style.visibility = 'hidden'; modal.style.opacity = '0'; }
+  
+  const appointmentTriggers = [
+    document.getElementById('navAppointmentBtn'),
+    ...document.querySelectorAll('.hero-appointment-btn'),
+    ...document.querySelectorAll('.contact-appointment-btn'),
+    ...document.querySelectorAll('.doctor-book')
+  ];
+  appointmentTriggers.forEach(btn => btn?.addEventListener('click', (e) => { e.preventDefault(); openModal(); }));
+  closeModalBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+  const appForm = document.getElementById('appointmentForm');
+  appForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fullName = document.getElementById('fullName').value.trim();
+    const age = document.getElementById('age').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const preferredDoctor = document.getElementById('preferredDoctor').value;
+    const date = document.getElementById('date').value;
+    const timeSlot = document.querySelector('input[name="timeslot"]:checked');
+    
+    if (!fullName || !phone || !preferredDoctor || !date || !timeSlot) {
+      alert("⚠️ Please fill all required fields.");
+      return;
+    }
+    
+    let doctorName = "", doctorNumber = "";
+    if (preferredDoctor === "ashlesha") {
+      doctorName = "Dr. Ashlesha Shimpi-Dighe";
+      doctorNumber = "9850823550";
+    } else {
+      doctorName = "Dr. Mohnish Dighe";
+      doctorNumber = "9762801248";
+    }
+    
+    // Construct WhatsApp message
+    const message = `*New Appointment Request*%0A%0A*Patient Name:* ${fullName}%0A*Age:* ${age || 'Not provided'}%0A*Phone:* ${phone}%0A*Email:* ${email || 'Not provided'}%0A*Doctor:* ${doctorName}%0A*Date:* ${date}%0A*Time Slot:* ${timeSlot.value}%0A%0A*Clinic:* SP Super Speciality Clinic, Wakad, Pune.%0APlease confirm this appointment.`;
+    
+    // Create WhatsApp URL with doctor's number (add 91 prefix for India)
+    const whatsappNumber = "91" + doctorNumber;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+    
+    // Open WhatsApp in new tab
+    window.open(whatsappUrl, '_blank');
+    
+    // Optional alert for user confirmation
+    alert(`✅ Appointment request opened in WhatsApp for ${doctorName}. Please send the message to confirm.`);
+    
+    appForm.reset();
+    closeModal();
+  });
+
+  // Directions button
+  document.querySelectorAll('.directions-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      window.open('https://www.google.com/maps/search/?api=1&query=Khinvasara+Trade+Centre+Wakad+Pune', '_blank');
+    });
+  });
+
+  // AI CHATBOT (unchanged)
+  const aiModal = document.getElementById('aiModal');
+  const aiBtn = document.getElementById('aiAssistantBtn');
+  const aiClose = document.getElementById('closeAiModal');
+  const aiTriggers = document.querySelectorAll('.ai-assistant-trigger');
+  const chatBody = document.getElementById('chatBody');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendChatBtn');
+  function openAiModal() { aiModal.classList.add('active'); }
+  function closeAiModal() { aiModal.classList.remove('active'); }
+  if (aiBtn) aiBtn.addEventListener('click', openAiModal);
+  aiTriggers.forEach(trig => trig.addEventListener('click', (e) => { e.preventDefault(); openAiModal(); }));
+  if (aiClose) aiClose.addEventListener('click', closeAiModal);
+  window.addEventListener('click', (e) => { if (e.target === aiModal) closeAiModal(); });
+  function getBotReply(userMsg) {
+    const msg = userMsg.toLowerCase();
+    if (msg.includes('appointment') || msg.includes('book')) return "To book an appointment, click the '📅 Appointment' button in the navbar or on the home page.";
+    if (msg.includes('hour') || msg.includes('timing') || msg.includes('consultation')) return "Consultation hours: Monday to Saturday, 10:00 AM – 2:00 PM and 6:30 PM – 8:30 PM. Emergency: +91 20 6731 3000.";
+    if (msg.includes('doctor') || msg.includes('specialist')) return "We have Dr. Ashlesha (Pediatric Surgery) and Dr. Mohnish (Neurosurgery). Visit the 'Doctors' page.";
+    if (msg.includes('address') || msg.includes('location') || msg.includes('map')) return "📍 SP Superspeciality Clinic, Khinvasara Trade Centre, Wakad, Pune – 411057.";
+    return "I'm here to help! Ask about appointments, doctors, hours, or location.";
+  }
+  function addMessage(text, isUser) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `chat-message ${isUser ? 'user-message' : 'bot-message'}`;
+    msgDiv.textContent = text;
+    chatBody.appendChild(msgDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+  function handleUserMessage() {
+    const userText = chatInput.value.trim();
+    if (!userText) return;
+    addMessage(userText, true);
+    chatInput.value = '';
+    setTimeout(() => { const reply = getBotReply(userText); addMessage(reply, false); }, 300);
+  }
+  sendBtn.addEventListener('click', handleUserMessage);
+  chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserMessage(); });
+  const dateInput = document.getElementById('date');
+  if (dateInput) dateInput.min = new Date().toISOString().split('T')[0];
+
+  // REVIEW SYSTEM (unchanged)
+  const reviewModal = document.getElementById('reviewModal');
+  const openReviewBtn = document.getElementById('openReviewBtn');
+  const closeReviewModalBtn = document.getElementById('closeReviewModalBtn');
+  const reviewForm = document.getElementById('reviewForm');
+  const testimonialsGrid = document.getElementById('testimonialsGrid');
+  const defaultReviews = [
+    { name: "Rohan", city: "Pune", text: "“Dr. Ashlesha explained everything with patience.”" },
+    { name: "Sneha", city: "Mumbai", text: "“Best neurosurgeon in Wakad.”" },
+    { name: "Anjali", city: "Pimpri", text: "“Very supportive staff.”" }
+  ];
+  let reviews = [];
+  function loadReviews() {
+    const stored = localStorage.getItem('spClinicReviews');
+    if (stored) { reviews = JSON.parse(stored); }
+    else { reviews = [...defaultReviews]; localStorage.setItem('spClinicReviews', JSON.stringify(reviews)); }
+    renderReviews();
+  }
+  function renderReviews() {
+    if (!testimonialsGrid) return;
+    testimonialsGrid.innerHTML = '';
+    reviews.forEach(review => {
+      const card = document.createElement('div');
+      card.className = 'testimonial-card';
+      card.innerHTML = `<p>${review.text}</p><div class="reviewer">— ${review.name}, ${review.city}</div>`;
+      testimonialsGrid.appendChild(card);
+    });
+  }
+  function addReview(name, city, text) {
+    reviews.unshift({ name: name.trim(), city: city.trim(), text: `“${text.trim()}”` });
+    if (reviews.length > 15) reviews.pop();
+    localStorage.setItem('spClinicReviews', JSON.stringify(reviews));
+    renderReviews();
+  }
+  if (openReviewBtn) openReviewBtn.addEventListener('click', () => { reviewModal.style.visibility = 'visible'; reviewModal.style.opacity = '1'; });
+  if (closeReviewModalBtn) closeReviewModalBtn.addEventListener('click', () => { reviewModal.style.visibility = 'hidden'; reviewModal.style.opacity = '0'; });
+  reviewModal?.addEventListener('click', (e) => { if (e.target === reviewModal) { reviewModal.style.visibility = 'hidden'; reviewModal.style.opacity = '0'; } });
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('reviewerName').value.trim();
+      const city = document.getElementById('reviewerCity').value.trim();
+      const text = document.getElementById('reviewText').value.trim();
+      if (!name || !city || !text) { alert("Please fill all fields."); return; }
+      addReview(name, city, text);
+      reviewForm.reset();
+      reviewModal.style.visibility = 'hidden';
+      reviewModal.style.opacity = '0';
+      alert("Thank you for your review!");
+    });
+  }
+  loadReviews();
+</script>
+</body>
+</html>
